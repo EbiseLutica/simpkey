@@ -1,0 +1,15 @@
+extends _base
+
+block content
+    p Simpkey へようこそ
+    p 使用するインスタンス、ユーザー名、パスワードを入力して、今すぐ始めましょう。
+    form(action="/", method="post")
+        div: label インスタンス名: 
+            input(type="text", name="host", placeholder="例: misskey.io")
+        div: label ユーザー名: 
+            input(type="text", name="username")
+        div: label パスワード: 
+            input(type="password", name="password")
+        div: label 2段階認証コード (必要なら): 
+            input(type="text", name="token")
+        button(type="submit") ログイン

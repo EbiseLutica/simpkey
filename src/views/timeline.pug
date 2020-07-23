@@ -1,0 +1,27 @@
+extends _base
+
+block content
+    +avatar(user)
+    p: b=getUserName(user)
+        | &nbsp;
+        span(style="color: gray")= getAcct(user)
+    form(action="/note", method="post")
+        textarea(name="text", placeholder="今何してる？" style="max-width: 100%; min-width: 100%; height: 6em; margin-bottom: 8px")
+        button(type="submit") ノート
+    hr
+    div
+        a(href="/") ﾎｰﾑ
+        | ・
+        a(href="/ltl") ﾛｰｶﾙ
+        | ・
+        a(href="/stl") ｿｰｼｬﾙ
+        | ・
+        a(href="/gtl") ｸﾞﾛｰﾊﾞﾙ
+    h2= timelineName
+    each note in timeline
+        if (note.renote)
+            p: b 🔁 !{getUserName(note.user)} がRenote
+            +note(note.renote)
+        else
+            +note(note)
+        hr

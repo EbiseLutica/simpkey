@@ -1,0 +1,35 @@
+mixin avatar(user)
+    img.avatar(src=user.avatarUrl, alt="avatar for " + user.username style="width: 64px; height: 64px; border-radius: 50%")
+
+mixin note(note)
+    .note(id=note.id)
+        +avatar(note.user)
+        p: b=getUserName(note.user)
+            | &nbsp;
+            span(style="color: gray")= getAcct(note.user)
+        p= note.text
+        aside= new Date(note.createdAt).toLocaleString()
+        aside= note.visibility
+
+html
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        block meta
+        title= title
+    body
+        header
+            h1: a(href="/") Simpkey
+            block header
+        main
+            block content
+
+        footer
+            hr
+            div
+                a(href="/privacy-policy") プライバシーポリシー
+                | ・
+                a(href="/terms") 利用規約
+            p (C)2020 Xeltica - 
+                a(href="/about") version !{version}
+            block footer
