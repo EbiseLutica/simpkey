@@ -2,7 +2,7 @@ extends _base
 
 block content
     h2 このノートにリアクションを押しますか？
-    +note(note)
+    +sub-note(note)
     form(action="action/react", method="post")
         each val in reactions
             div: label

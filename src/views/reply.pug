@@ -2,6 +2,6 @@ extends _base
 
 block content
     h2 このノートに返信しますか？
-    +note(note)
+    +sub-note(note)
     +post-form('action/create-note', "何と返そうか？", "返信")
         input(type="hidden", name="replyId", value=note.id)

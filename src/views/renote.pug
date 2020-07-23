@@ -2,6 +2,6 @@ extends _base
 
 block content
     h2 このノートをリノートしますか？
-    +note(note)
+    +sub-note(note)
     +post-form('action/create-note', "コメント(省略可能)", "リノート")
         input(type="hidden", name="renoteId", value=note.id)
