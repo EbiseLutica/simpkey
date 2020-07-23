@@ -2,7 +2,7 @@ mixin avatar(user)
     img.avatar(src=user.avatarUrl, alt="avatar for " + user.username style="width: 64px; height: 64px; border-radius: 50%")&attributes(attributes)
 
 mixin note-header(note)
-    div.header&attributes(attributes)
+    header&attributes(attributes)
         span.name= getUserName(note.user)
         span.acct(style="color: gray")= getAcct(note.user)  
 
@@ -32,6 +32,27 @@ mixin note(note)
             .reactions
                 each val, key in note.reactions
                     span(class=(key === note.myReaction ? 'my reaction' : 'reaction'))=`${key} ${val}`
+            footer
+                |[
+                a(href="/reply?noteId=" + note.id) ﾘﾌﾟﾗｲ
+                |] [
+                a(href="/renote?noteId=" + note.id) ﾘﾉｰﾄ
+                |] 
+                if !note.myReaction
+                    | [
+                    a(href="/react?noteId=" + note.id) ﾘｱｸｼｮﾝ
+                    | ]
+                else
+                    form(action="action/unreact", method="post" style="display: inline")
+                        input(type="hidden", name="noteId", value=note.id)
+                        button(type="submit") リアクション解除
+
+mixin post-form(url, placeholder, buttonText)
+    form(action=url, method="post")
+        textarea(name="text", placeholder=placeholder style="max-width: 100%; min-width: 100%; height: 6em; margin-bottom: 8px")
+        button(type="submit")= buttonText
+        block
+            
         
 
 html

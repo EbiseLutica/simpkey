@@ -9,6 +9,7 @@ export interface User {
     carefulBot: boolean;
     createdAt: string;
     description: string | null;
+    clientData?: { reactions: string[] };
     fields: { name: string, value: string }[];
     followersCount: number;
     followingCount: number;

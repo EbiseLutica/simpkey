@@ -5,20 +5,22 @@ block content
     p: b=getUserName(user)
         | &nbsp;
         span(style="color: gray")= getAcct(user)
-    form(action="/action/create-note", method="post")
-        textarea(name="text", placeholder="今何してる？" style="max-width: 100%; min-width: 100%; height: 6em; margin-bottom: 8px")
-        button(type="submit") ノート
+    +post-form("/action/create-note", "今なにしてる？", "ノート")
     hr
     div
+        |[
         a(href="/") ﾎｰﾑ
-        | ・
+        |] [
         a(href="/ltl") ﾛｰｶﾙ
-        | ・
+        |] [
         a(href="/stl") ｿｰｼｬﾙ
-        | ・
+        |] [
         a(href="/gtl") ｸﾞﾛｰﾊﾞﾙ
-        | ・
+        |] [
+        a(href="/notifications") 通知
+        |] [
         a(href="/settings") 設定
+        |]
     h2= timelineName
     each note in timeline
         +note(note)

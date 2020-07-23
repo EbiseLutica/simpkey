@@ -1,6 +1,6 @@
 import { Context, DefaultState } from 'koa';
 import Router from 'koa-router';
-import { signIn, api, i } from './misskey';
+import { signIn, api, i, notesShow } from './misskey';
 import { Note } from './models/Note';
 import { die } from './die';
 
@@ -72,6 +72,7 @@ router.get('/stl', async ctx => {
 		await timeline(ctx, host, 'notes/hybrid-timeline', 'ソーシャルタイムライン', token);
 	}
 });
+
 router.get('/gtl', async ctx => {
 	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');
@@ -85,6 +86,70 @@ router.get('/gtl', async ctx => {
 		await die(ctx, 'グローバルタイムラインは無効化されています');
 	} else {
 		await timeline(ctx, host, 'notes/global-timeline', 'グローバルタイムライン', token);
+	}
+});
+
+router.get('/renote', async ctx => {
+	const token = ctx.cookies.get('i');
+	const host = ctx.cookies.get('host');
+	if (!token || !host) {
+		await die(ctx, 'ログインしてください');
+		return;
+	}
+
+	if (!ctx.query.noteId) {
+		await die(ctx, 'noteId required');
+		return;
+	}
+
+	try {
+		const note = await notesShow(host, ctx.query.noteId);
+		await ctx.render('renote', { note });
+	} catch(e) {
+		await die(ctx, e.message);
+	}
+});
+
+router.get('/reply', async ctx => {
+	const token = ctx.cookies.get('i');
+	const host = ctx.cookies.get('host');
+	if (!token || !host) {
+		await die(ctx, 'ログインしてください');
+		return;
+	}
+
+	if (!ctx.query.noteId) {
+		await die(ctx, 'noteId required');
+		return;
+	}
+
+	try {
+		const note = await notesShow(host, ctx.query.noteId);
+		await ctx.render('reply', { note });
+	} catch(e) {
+		await die(ctx, e.message);
+	}
+});
+
+router.get('/react', async ctx => {
+	const token = ctx.cookies.get('i');
+	const host = ctx.cookies.get('host');
+	if (!token || !host) {
+		await die(ctx, 'ログインしてください');
+		return;
+	}
+
+	if (!ctx.query.noteId) {
+		await die(ctx, 'noteId required');
+		return;
+	}
+
+	try {
+		const note = await notesShow(host, ctx.query.noteId);
+		const myself = await i(host, token);
+		await ctx.render('react', { note, reactions: myself.clientData?.reactions });
+	} catch(e) {
+		await die(ctx, e.message);
 	}
 });
 
@@ -121,15 +186,36 @@ router.post('/action/:action', async ctx => {
 	}
 
 	const action = ctx.params.action as string;
-	switch (action) {
-	case 'create-note': {
-		const { text } = ctx.request.body;
-		if (!text) await die(ctx, 'テキストがありません');
-		await api(host, 'notes/create', { text, i });
-		break;
+	try {
+		switch (action) {
+		case 'create-note': {
+			const { text, renoteId, replyId } = ctx.request.body;
+			const opts = { i } as Record<string, string>;
+			if (text) opts.text = text;
+			if (renoteId) opts.renoteId = renoteId;
+			if (replyId) opts.replyId = replyId;
+			await api(host, 'notes/create', opts);
+			break;
+		}
+		case 'react': {
+			const { noteId, reaction, customReaction } = ctx.request.body;
+			if (!noteId) throw new Error('noteId required');
+			if (!reaction) throw new Error('絵文字が指定されていません');
+			await api(host, 'notes/reactions/create', { i, noteId, reaction: reaction === 'custom' ? customReaction : reaction });
+			break;
+		}
+		case 'unreact': {
+			const { noteId } = ctx.request.body;
+			if (!noteId) throw new Error('noteId required');
+			await api(host, 'notes/reactions/delete', { i, noteId });
+			break;
+		}
+		}
+	} catch (e) {
+		await die(ctx, e.message);
+		return;
 	}
-	}
-	ctx.redirect('back', '/');
+	ctx.redirect('/');
 });
 
 router.post('/logout', ctx => {

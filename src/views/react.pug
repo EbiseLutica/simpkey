@@ -1,0 +1,16 @@
+extends _base
+
+block content
+    h2 このノートにリアクションを押しますか？
+    +note(note)
+    form(action="action/react", method="post")
+        each val in reactions
+            div: label
+                input(type="radio", name="reaction" value=val)
+                != val
+        div: label
+            input(type="radio", name="reaction", value="custom")
+            input(type="text", name="customReaction")
+        input(type="hidden", name="noteId", value=note.id)
+
+        button(type="submit") リアクションを押す
