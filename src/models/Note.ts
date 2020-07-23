@@ -17,6 +17,7 @@ export interface Note {
     replyId: string | null;
     reply?: Note;
     text: string | null;
+    myReaction?: string;
     uri: string | null;
     url: string | null;
     user: User,

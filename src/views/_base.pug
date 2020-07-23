@@ -1,16 +1,38 @@
 mixin avatar(user)
-    img.avatar(src=user.avatarUrl, alt="avatar for " + user.username style="width: 64px; height: 64px; border-radius: 50%")
+    img.avatar(src=user.avatarUrl, alt="avatar for " + user.username style="width: 64px; height: 64px; border-radius: 50%")&attributes(attributes)
+
+mixin note-header(note)
+    div.header&attributes(attributes)
+        span.name= getUserName(note.user)
+        span.acct(style="color: gray")= getAcct(note.user)  
 
 mixin note(note)
-    .note(id=note.id)
-        +avatar(note.user)
-        p: b=getUserName(note.user)
-            | &nbsp;
-            span(style="color: gray")= getAcct(note.user)
-        p= note.text
-        aside
-            !=getVisibility(note)
-            !=new Date(note.createdAt).toLocaleString()
+    if (note.reply)
+        +note(note.reply)(style="opacity: 0.5")
+    if (note.renote && !note.text)
+        p: b 🔁 !{getUserName(note.user)} がRenote
+        +note(note.renote)
+    else
+        .note&attributes(attributes)
+            +avatar(note.user)
+            +note-header(note)
+            p
+                if (note.reply)
+                    | ↩
+                != note.text
+            if (note.renote)
+                p RN:
+                .sub-note
+                    +avatar(note.renote.user)                  
+                    +note-header(note.renote)
+                    p= note.renote.text
+            aside
+                span.visibility= getVisibility(note)
+                span.date= new Date(note.createdAt).toLocaleString()
+            .reactions
+                each val, key in note.reactions
+                    span(class=(key === note.myReaction ? 'my reaction' : 'reaction'))=`${key} ${val}`
+        
 
 html
     head

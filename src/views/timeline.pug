@@ -21,9 +21,5 @@ block content
         a(href="/settings") 設定
     h2= timelineName
     each note in timeline
-        if (note.renote)
-            p: b 🔁 !{getUserName(note.user)} がRenote
-            +note(note.renote)
-        else
-            +note(note)
+        +note(note)
         hr
