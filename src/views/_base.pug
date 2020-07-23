@@ -8,8 +8,9 @@ mixin note(note)
             | &nbsp;
             span(style="color: gray")= getAcct(note.user)
         p= note.text
-        aside= new Date(note.createdAt).toLocaleString()
-        aside= note.visibility
+        aside
+            !=getVisibility(note)
+            !=new Date(note.createdAt).toLocaleString()
 
 html
     head

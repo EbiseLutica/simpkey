@@ -5,7 +5,7 @@ block content
     p: b=getUserName(user)
         | &nbsp;
         span(style="color: gray")= getAcct(user)
-    form(action="/note", method="post")
+    form(action="/action/create-note", method="post")
         textarea(name="text", placeholder="今何してる？" style="max-width: 100%; min-width: 100%; height: 6em; margin-bottom: 8px")
         button(type="submit") ノート
     hr
@@ -17,6 +17,8 @@ block content
         a(href="/stl") ｿｰｼｬﾙ
         | ・
         a(href="/gtl") ｸﾞﾛｰﾊﾞﾙ
+        | ・
+        a(href="/settings") 設定
     h2= timelineName
     each note in timeline
         if (note.renote)
