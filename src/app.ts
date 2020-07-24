@@ -1,18 +1,23 @@
 import Koa from 'koa';
-import { router } from './router';
-import config from './config';
 import bodyParser from 'koa-bodyparser';
-import { render } from './render';
 
+import { router } from './router';
+import constant from './const';
+import { render } from './render';
+import fs from 'fs';
+
+const conf = JSON.parse(fs.readFileSync(__dirname + '/../config.json', 'utf-8'));
 
 const app = new Koa();
 
-console.log('Simpkey v' + config.version);
+console.log('Simpkey v' + constant.version);
 
 app.use(bodyParser());
 app.use(render);
 app.use(router.routes());
 
+console.log(`listening port ${conf.port}...`);
+
 console.log('App launched!');
 
-app.listen(3000);
+app.listen(conf.port || 3000);

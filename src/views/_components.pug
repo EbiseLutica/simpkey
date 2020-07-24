@@ -147,8 +147,8 @@ mixin user-header(user, detail = false)
             .sex 性別: #{user.sex}
         dl
             each field in user.fields
-                dt= mfmToHtml(field.name)
-                dd= mfmToHtml(field.value)
+                dt !{mfmToHtml(field.name)}
+                dd !{mfmToHtml(field.value)}
                 
     .count
         a.notes(href="/" + getAcct(user)) #{user.notesCount} ノート

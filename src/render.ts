@@ -3,13 +3,13 @@ import { parse, toHtml } from 'mfmf';
 import { parsePlain } from 'mfmf/dist/script/mfm/parse';
 
 
-import config from './config';
+import constant from './const';
 import { User } from './models/User';
 import { Note } from './models/Note';
 
 export const render = views(__dirname + '/views', {
 	extension: 'pug', options: {
-		...config,
+		...constant,
 		mfmToHtml: (text: string, plain = false) => {
 			return toHtml(plain ? parsePlain(text) : parse(text), [], {
 				url: '',

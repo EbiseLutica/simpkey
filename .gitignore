@@ -1,3 +1,4 @@
 node_modules
 built
 yarn-error.log
+config.json
