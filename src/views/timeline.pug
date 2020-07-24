@@ -4,12 +4,8 @@ block header
     +nav
 
 block content
-    p: b=getUserName(user)
-        | &nbsp;
-        span(style="color: gray")= getAcct(user)
+    +user-header(user)
     +post-form("/action/create-note", "今なにしてる？", "ノート")
     hr
     h2= timelineName
-    each note in timeline
-        hr
-        +note(note)
+    +timeline(notes)

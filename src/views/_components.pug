@@ -4,14 +4,24 @@ mixin avatar(user)
 
 mixin note-header(note)
     header&attributes(attributes)
-        span.name= getUserName(note.user)
-        span.acct(style="color: gray")= getAcct(note.user)  
+        a(href="/" + getAcct(note.user))
+            span.name= getUserName(note.user)
+            span.acct(style="color: gray")= getAcct(note.user)
 
 mixin sub-note(note)
     .sub-note
         +avatar(note.user)                  
         +note-header(note)
-        p= note.text
+        p
+            if note.cw
+                details
+                    summary !{note.cw} (!{note.text.length}文字)
+                    != note.text
+            else
+                != note.text
+        aside
+            span.visibility= getVisibility(note)
+            a.date(href="/notes/" + note.id)= new Date(note.createdAt).toLocaleString()
 
 mixin note(note)
     if note.reply
@@ -37,19 +47,19 @@ mixin note(note)
                 +sub-note(note.renote)
             aside
                 span.visibility= getVisibility(note)
-                span.date= new Date(note.createdAt).toLocaleString()
+                a.date(href="/notes/" + note.id)= new Date(note.createdAt).toLocaleString()
             .reactions
                 each val, key in note.reactions
                     span(class=(key === note.myReaction ? 'my reaction' : 'reaction'))=`${key} ${val}`
             footer
                 |[
-                a(href="/reply?noteId=" + note.id) ﾘﾌﾟﾗｲ
+                a(href="/reply/" + note.id) ﾘﾌﾟﾗｲ !{note.repliesCount}
                 |] [
-                a(href="/renote?noteId=" + note.id) ﾘﾉｰﾄ
+                a(href="/renote/" + note.id) ﾘﾉｰﾄ !{note.renoteCount}
                 |] 
                 if !note.myReaction
                     | [
-                    a(href="/react?noteId=" + note.id) ﾘｱｸｼｮﾝ
+                    a(href="/react/" + note.id) ﾘｱｸｼｮﾝ
                     | ]
                 else
                     form(action="action/unreact", method="post" style="display: inline")
@@ -77,3 +87,36 @@ mixin nav()
         |] [
         a(href="/settings") 設定
         |]
+
+mixin user-header(user, detail = false)
+    +avatar(user)
+    .name: b=getUserName(user)
+        | &nbsp;
+        span(style="color: gray")= getAcct(user)
+    if detail
+        if user.description
+            .description= user.description
+        if user.birthday
+            .birthday 🎂 !{user.birthday}
+        if user.location
+            .birthday 📍!{user.location}
+        if user.sex
+            .sex 性別: !{user.sex}
+        if user.sex
+            .sex 性別: !{user.sex}
+        dl
+            each field in user.fields
+                dt= field.name
+                dd= field.value
+                
+    .count
+        a.notes(href="/" + getAcct(user)) !{user.notesCount} ノート
+        |  
+        a.following(href="/" + getAcct(user) + "/following") !{user.followingCount} フォロー
+        |  
+        a.followers(href="/" + getAcct(user) + "/followers") !{user.followersCount} フォロワー
+
+mixin timeline(notes)
+    each note in notes
+        hr
+        +note(note)

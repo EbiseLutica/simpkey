@@ -1,6 +1,6 @@
 import { Context, DefaultState } from 'koa';
 import Router from 'koa-router';
-import { signIn, api, i, notesShow } from './misskey';
+import { signIn, api, i, notesShow, usersShowByName } from './misskey';
 import { Note } from './models/Note';
 import { die } from './die';
 
@@ -21,11 +21,11 @@ for (const [ name, title ] of staticRouting) {
 
 async function timeline(ctx: Context, host: string, endpoint: string, timelineName: string, token: string) {
 	const user = await i(host, token);
-	const timeline = await api<Note[]>(host, endpoint, { i: token });
+	const notes = await api<Note[]>(host, endpoint, { i: token });
 
 	await ctx.render('timeline', {
 		title: timelineName + ' - Simpkey',
-		user, timeline, timelineName
+		user, notes, timelineName
 	});
 }
 
@@ -102,7 +102,7 @@ router.get('/notifications', async ctx => {
 
 });
 
-router.get('/renote', async ctx => {
+router.get('/renote/:noteId', async ctx => {
 	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');
 	if (!token || !host) {
@@ -110,20 +110,15 @@ router.get('/renote', async ctx => {
 		return;
 	}
 
-	if (!ctx.query.noteId) {
-		await die(ctx, 'noteId required');
-		return;
-	}
-
 	try {
-		const note = await notesShow(host, ctx.query.noteId);
+		const note = await notesShow(host, ctx.params.noteId);
 		await ctx.render('renote', { note });
 	} catch(e) {
 		await die(ctx, e.message);
 	}
 });
 
-router.get('/reply', async ctx => {
+router.get('/reply/:noteId', async ctx => {
 	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');
 	if (!token || !host) {
@@ -131,20 +126,15 @@ router.get('/reply', async ctx => {
 		return;
 	}
 
-	if (!ctx.query.noteId) {
-		await die(ctx, 'noteId required');
-		return;
-	}
-
 	try {
-		const note = await notesShow(host, ctx.query.noteId);
+		const note = await notesShow(host, ctx.params.noteId);
 		await ctx.render('reply', { note });
 	} catch(e) {
 		await die(ctx, e.message);
 	}
 });
 
-router.get('/react', async ctx => {
+router.get('/react/:noteId', async ctx => {
 	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');
 	if (!token || !host) {
@@ -152,18 +142,30 @@ router.get('/react', async ctx => {
 		return;
 	}
 
-	if (!ctx.query.noteId) {
-		await die(ctx, 'noteId required');
-		return;
-	}
-
 	try {
-		const note = await notesShow(host, ctx.query.noteId);
+		const note = await notesShow(host, ctx.params.noteId);
 		const myself = await i(host, token);
 		await ctx.render('react', { note, reactions: myself.clientData?.reactions });
 	} catch(e) {
 		await die(ctx, e.message);
 	}
+});
+
+router.get('/@:acct', async ctx => {
+	const i = ctx.cookies.get('i');
+	const host = ctx.cookies.get('host');
+	if (!i || !host) {
+		await die(ctx, 'ログインしてください');
+		return;
+	}
+
+	const acct = ctx.params.acct.split('@');
+	const username = acct[0];
+	const remoteHost = acct[1];
+
+	const user = await usersShowByName(host, username, remoteHost);
+	const notes = await api<Note[]>(host, 'users/notes', { i, userId: user.id });
+	await ctx.render('user', { user, notes });
 });
 
 router.post('/', async ctx => {

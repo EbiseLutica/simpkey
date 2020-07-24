@@ -23,6 +23,15 @@ export function usersShow(host: string, userId: string): Promise<User> {
 	return api<User>(host, 'users/show', { userId });
 }
 
+export function usersShowByName(host: string, username: string, userHost?: string): Promise<User> {
+	const opts: Record<string, string> = {};
+	opts.username = username;
+	if (userHost) {
+		opts.host = userHost;
+	}
+	return api<User>(host, 'users/show', opts);
+}
+
 export function notesShow(host: string, noteId: string): Promise<Note> {
 	return api<Note>(host, 'notes/show', { noteId });
 }
