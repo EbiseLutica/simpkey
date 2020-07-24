@@ -66,7 +66,7 @@ mixin note(note)
                 if canRenote && canRenote(note)
                     |[
                     a(href="/renote/" + note.id) ﾘﾉｰﾄ !{note.renoteCount}
-                    |] 
+                    |]
                 if canReact && canReact(note)
                     if !note.myReaction
                         | [
@@ -75,7 +75,7 @@ mixin note(note)
                     else
                         form(action="action/unreact", method="post" style="display: inline")
                             input(type="hidden", name="noteId", value=note.id)
-                            button(type="submit") リアクション解除
+                            button(type="submit") ﾘｱｸｼｮﾝ解除
 
 mixin post-form(url, placeholder, buttonText)
     form(action=url, method="post")
@@ -90,13 +90,13 @@ mixin post-form(url, placeholder, buttonText)
 mixin nav()
     div
         |[
-        a(href="/") ﾎｰﾑ
+        a(href="/") ホーム
         |] [
-        a(href="/ltl") ﾛｰｶﾙ
+        a(href="/ltl") ローカル
         |] [
-        a(href="/stl") ｿｰｼｬﾙ
+        a(href="/stl") ソーシャル
         |] [
-        a(href="/gtl") ｸﾞﾛｰﾊﾞﾙ
+        a(href="/gtl") グローバル
         |] [
         a(href="/notifications") 通知
         |] [
@@ -116,6 +116,9 @@ mixin user-header(user, detail = false)
     .name: b=getUserName(user)
         | &nbsp;
         span(style="color: gray")= getAcct(user)
+        if user.isFollowed
+            span.is-followed フォローされています
+
         if user.isLocked
             span.lock
         if user.isAdmin
@@ -145,9 +148,11 @@ mixin user-header(user, detail = false)
     .count
         a.notes(href="/" + getAcct(user)) !{user.notesCount} ノート
         |  
-        a.following(href="/" + getAcct(user) + "/following") !{user.followingCount} フォロー
+        //- a.following(href="/" + getAcct(user) + "/following") 
+        | !{user.followingCount} フォロー
         |  
-        a.followers(href="/" + getAcct(user) + "/followers") !{user.followersCount} フォロワー
+        //- a.followers(href="/" + getAcct(user) + "/followers")
+        | !{user.followersCount} フォロワー
 
 mixin timeline(notes)
     each note in notes
