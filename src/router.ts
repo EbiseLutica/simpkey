@@ -23,9 +23,14 @@ async function timeline(ctx: Context, host: string, endpoint: string, timelineNa
 	const user = await i(host, token);
 	const notes = await api<Note[]>(host, endpoint, { i: token });
 
+	const myself = await i(host, token);
 	await ctx.render('timeline', {
 		title: timelineName + ' - Simpkey',
-		user, notes, timelineName
+		user, 
+		notes, 
+		timelineName, 
+		canRenote: (note: Note) => note.userId === myself.id || note.visibility === 'public' || note.visibility === 'home',
+		canReact: (note: Note) => note.userId !== myself.id, 
 	});
 }
 
@@ -97,8 +102,13 @@ router.get('/notifications', async ctx => {
 		return;
 	}
 
+	const myself = await i(host, token);
 	const notifications = await api<any>(host, 'i/notifications', { i: token });
-	await ctx.render('notifications', { notifications });
+	await ctx.render('notifications', { 
+		notifications, 
+		canRenote: (note: Note) => note.userId === myself.id || note.visibility === 'public' || note.visibility === 'home',
+		canReact: (note: Note) => note.userId !== myself.id, 
+	});
 
 });
 
@@ -111,8 +121,12 @@ router.get('/renote/:noteId', async ctx => {
 	}
 
 	try {
+		const myself = await i(host, token);
 		const note = await notesShow(host, ctx.params.noteId);
-		await ctx.render('renote', { note });
+		await ctx.render('renote', {
+			note, 
+			canRenote: note.userId === myself.id || note.visibility === 'public' || note.visibility === 'home' 
+		});
 	} catch(e) {
 		await die(ctx, e.message);
 	}
@@ -145,16 +159,20 @@ router.get('/react/:noteId', async ctx => {
 	try {
 		const note = await notesShow(host, ctx.params.noteId);
 		const myself = await i(host, token);
-		await ctx.render('react', { note, reactions: myself.clientData?.reactions });
+		await ctx.render('react', { 
+			note, 
+			reactions: myself.clientData?.reactions, 
+			canReact: note.userId !== myself.id && !note.myReaction
+		});
 	} catch(e) {
 		await die(ctx, e.message);
 	}
 });
 
 router.get('/@:acct', async ctx => {
-	const i = ctx.cookies.get('i');
+	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');
-	if (!i || !host) {
+	if (!token || !host) {
 		await die(ctx, 'ログインしてください');
 		return;
 	}
@@ -162,10 +180,16 @@ router.get('/@:acct', async ctx => {
 	const acct = ctx.params.acct.split('@');
 	const username = acct[0];
 	const remoteHost = acct[1];
+	const myself = await i(host, token);
 
 	const user = await usersShowByName(host, username, remoteHost);
-	const notes = await api<Note[]>(host, 'users/notes', { i, userId: user.id });
-	await ctx.render('user', { user, notes });
+	const notes = await api<Note[]>(host, 'users/notes', { i: token, userId: user.id });
+	await ctx.render('user', { 
+		user, 
+		notes, 
+		canRenote: (note: Note) => note.userId === myself.id || note.visibility === 'public' || note.visibility === 'home',
+		canReact: (note: Note) => note.userId !== myself.id, 
+	});
 });
 
 router.post('/', async ctx => {

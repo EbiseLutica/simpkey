@@ -29,6 +29,6 @@ export const render = views(__dirname + '/views', {
 			}
 			if (note.localOnly) icon += '☣';
 			return icon;
-		},
+		}
 	}
 });

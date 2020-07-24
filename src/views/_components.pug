@@ -54,17 +54,20 @@ mixin note(note)
             footer
                 |[
                 a(href="/reply/" + note.id) ﾘﾌﾟﾗｲ !{note.repliesCount}
-                |] [
-                a(href="/renote/" + note.id) ﾘﾉｰﾄ !{note.renoteCount}
-                |] 
-                if !note.myReaction
-                    | [
-                    a(href="/react/" + note.id) ﾘｱｸｼｮﾝ
-                    | ]
-                else
-                    form(action="action/unreact", method="post" style="display: inline")
-                        input(type="hidden", name="noteId", value=note.id)
-                        button(type="submit") リアクション解除
+                |]
+                if canRenote && canRenote(note)
+                    |[
+                    a(href="/renote/" + note.id) ﾘﾉｰﾄ !{note.renoteCount}
+                    |] 
+                if canReact && canReact(note)
+                    if !note.myReaction
+                        | [
+                        a(href="/react/" + note.id) ﾘｱｸｼｮﾝ
+                        | ]
+                    else
+                        form(action="action/unreact", method="post" style="display: inline")
+                            input(type="hidden", name="noteId", value=note.id)
+                            button(type="submit") リアクション解除
 
 mixin post-form(url, placeholder, buttonText)
     form(action=url, method="post")
