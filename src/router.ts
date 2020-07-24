@@ -89,6 +89,19 @@ router.get('/gtl', async ctx => {
 	}
 });
 
+router.get('/notifications', async ctx => {
+	const token = ctx.cookies.get('i');
+	const host = ctx.cookies.get('host');
+	if (!token || !host) {
+		await die(ctx, 'ログインしてください');
+		return;
+	}
+
+	const notifications = await api<any>(host, 'i/notifications', { i: token });
+	await ctx.render('notifications', { notifications });
+
+});
+
 router.get('/renote', async ctx => {
 	const token = ctx.cookies.get('i');
 	const host = ctx.cookies.get('host');

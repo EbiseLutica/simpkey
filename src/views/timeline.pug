@@ -1,5 +1,8 @@
 extends _base
 
+block header
+    +nav
+
 block content
     +avatar(user)
     p: b=getUserName(user)
@@ -7,21 +10,7 @@ block content
         span(style="color: gray")= getAcct(user)
     +post-form("/action/create-note", "今なにしてる？", "ノート")
     hr
-    div
-        |[
-        a(href="/") ﾎｰﾑ
-        |] [
-        a(href="/ltl") ﾛｰｶﾙ
-        |] [
-        a(href="/stl") ｿｰｼｬﾙ
-        |] [
-        a(href="/gtl") ｸﾞﾛｰﾊﾞﾙ
-        |] [
-        a(href="/notifications") 通知
-        |] [
-        a(href="/settings") 設定
-        |]
     h2= timelineName
     each note in timeline
-        +note(note)
         hr
+        +note(note)
