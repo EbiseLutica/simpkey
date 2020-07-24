@@ -14,9 +14,9 @@ mixin sub-note(note)
         p= note.text
 
 mixin note(note)
-    if (note.reply)
+    if note.reply
         +sub-note(note.reply)(style="opacity: 0.5")
-    if (note.renote && !note.text)
+    if note.renote && !note.text
         p: b 🔁 !{getUserName(note.user)} がRenote
         +note(note.renote)
     else
@@ -24,10 +24,15 @@ mixin note(note)
             +avatar(note.user)
             +note-header(note)
             p
-                if (note.reply)
+                if note.reply
                     | ↩
-                != note.text
-            if (note.renote)
+                if note.cw
+                    details
+                        summary !{note.cw} (!{note.text.length}文字)
+                        != note.text
+                else
+                    != note.text
+            if note.renote
                 p RN:
                 +sub-note(note.renote)
             aside
