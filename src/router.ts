@@ -228,12 +228,13 @@ router.post('/action/:action', async ctx => {
 	try {
 		switch (action) {
 		case 'create-note': {
-			const { text, renoteId, replyId, useCw, cw } = ctx.request.body;
+			const { text, renoteId, replyId, useCw, cw, visibility } = ctx.request.body;
 			const opts = { i } as Record<string, string>;
 			if (text) opts.text = text;
 			if (renoteId) opts.renoteId = renoteId;
 			if (replyId) opts.replyId = replyId;
 			if (useCw) opts.cw = cw || '';
+			if (visibility) opts.visibility = visibility;
 			await api(host, 'notes/create', opts);
 			break;
 		}

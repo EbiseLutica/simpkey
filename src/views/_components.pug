@@ -14,7 +14,7 @@ mixin note-header(note)
         if note.user.isBot
             span.bot [BOT]
         if note.user.isCat
-            span.bot [CAT]        
+            span.bot [CAT]
 
 mixin sub-note(note)
     .sub-note
@@ -84,6 +84,13 @@ mixin post-form(url, placeholder, buttonText)
             span CW
         input(type="text", name="cw" placeholder="注釈(省略可能)" style="max-width: 100%; min-width: 100%;")
         textarea(name="text", placeholder=placeholder style="max-width: 100%; min-width: 100%; height: 6em; margin-bottom: 8px")
+
+        div: label 公開範囲: 
+            select(name="visibility")
+                option(value="public") パブリック
+                option(value="home") ホーム
+                option(value="followers") フォロワー
+                option(value="direct") ダイレクト
         button(type="submit")= buttonText
         block
 
