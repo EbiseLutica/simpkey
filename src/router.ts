@@ -11,6 +11,7 @@ const staticRouting = [
 	[ 'terms', '利用規約' ],
 	[ 'privacy-policy', 'プライバシーポリシー' ],
 	[ 'settings', '設定' ],
+	[ 'help', 'ヘルプ' ],
 ];
 
 for (const [ name, title ] of staticRouting) {

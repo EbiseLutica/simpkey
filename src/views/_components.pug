@@ -61,21 +61,21 @@ mixin note(note)
                     span(class=(key === note.myReaction ? 'my reaction' : 'reaction'))=`${key} ${val}`
             footer
                 |[
-                a(href="/reply/" + note.id) ﾘﾌﾟﾗｲ #{note.repliesCount}
+                a(href="/reply/" + note.id) 返信 #{note.repliesCount}
                 |]
                 if canRenote && canRenote(note)
                     |[
-                    a(href="/renote/" + note.id) ﾘﾉｰﾄ #{note.renoteCount}
+                    a(href="/renote/" + note.id) リノート #{note.renoteCount}
                     |]
                 if canReact && canReact(note)
                     if !note.myReaction
                         | [
-                        a(href="/react/" + note.id) ﾘｱｸｼｮﾝ
+                        a(href="/react/" + note.id) リアクション
                         | ]
                     else
                         form(action="action/unreact", method="post" style="display: inline")
                             input(type="hidden", name="noteId", value=note.id)
-                            button(type="submit") ﾘｱｸｼｮﾝ解除
+                            button(type="submit") リアクション解除
 
 mixin post-form(url, placeholder, buttonText)
     form(action=url, method="post")
