@@ -11,23 +11,23 @@ block content
                 hr
                 case val.type
                     when 'follow'
-                        p !{getUserName(val.user)} さんにフォローされました
+                        p #{getUserName(val.user)} さんにフォローされました
                     when 'mention'
                     when 'reply'
                     when 'renote'
                     when 'quote'
                         +note(val.note)
                     when 'reaction'
-                        p !{getUserName(val.user)} さんが !{val.reaction} とリアクションしました
+                        p #{getUserName(val.user)} さんが #{val.reaction} とリアクションしました
                         +sub-note(val.note)
                     when 'pollVote'
-                        p !{getUserName(val.user)} さんが投票しました
+                        p #{getUserName(val.user)} さんが投票しました
                         +sub-note(val.note)                        
                     when 'receiveFollowRequest'
-                        p !{getUserName(val.user)} さんからフォローリクエストされました
+                        p #{getUserName(val.user)} さんからフォローリクエストされました
                     when 'followRequestAccepted'
-                        p !{getUserName(val.user)} さんへのフォローが承認されました
+                        p #{getUserName(val.user)} さんへのフォローが承認されました
                     when 'groupInvited'
                     when 'app'
                     default
-                        p !{val.type} 通知(未実装)
+                        p #{val.type} 通知(未実装)

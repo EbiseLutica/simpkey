@@ -23,10 +23,10 @@ mixin sub-note(note)
         p
             if note.cw
                 details
-                    summary !{note.cw} (!{note.text.length}文字)
-                    != note.text
+                    summary #{note.cw} (#{note.text.length}文字)
+                    != mfmToHtml(note.text)
             else
-                != note.text
+                != mfmToHtml(note.text)
         aside
             span.visibility= getVisibility(note)
             a.date(href="/notes/" + note.id)= new Date(note.createdAt).toLocaleString()
@@ -35,7 +35,7 @@ mixin note(note)
     if note.reply
         +sub-note(note.reply)(style="opacity: 0.5")
     if note.renote && !note.text
-        p: b 🔁 !{getUserName(note.user)} がRenote
+        p: b 🔁 #{getUserName(note.user)} がRenote
         +note(note.renote)
     else
         .note&attributes(attributes)
@@ -46,10 +46,10 @@ mixin note(note)
                     | ↩
                 if note.cw
                     details
-                        summary !{note.cw} (!{note.text.length}文字)
-                        != note.text
+                        summary #{note.cw} (#{note.text.length}文字)
+                        != mfmToHtml(note.text)
                 else
-                    != note.text
+                    != mfmToHtml(note.text)
             if note.renote
                 p RN:
                 +sub-note(note.renote)
@@ -61,11 +61,11 @@ mixin note(note)
                     span(class=(key === note.myReaction ? 'my reaction' : 'reaction'))=`${key} ${val}`
             footer
                 |[
-                a(href="/reply/" + note.id) ﾘﾌﾟﾗｲ !{note.repliesCount}
+                a(href="/reply/" + note.id) ﾘﾌﾟﾗｲ #{note.repliesCount}
                 |]
                 if canRenote && canRenote(note)
                     |[
-                    a(href="/renote/" + note.id) ﾘﾉｰﾄ !{note.renoteCount}
+                    a(href="/renote/" + note.id) ﾘﾉｰﾄ #{note.renoteCount}
                     |]
                 if canReact && canReact(note)
                     if !note.myReaction
@@ -138,28 +138,26 @@ mixin user-header(user, detail = false)
             span.bot [CAT]
     if detail
         if user.description
-            .description= user.description
+            .description !{mfmToHtml(user.description)}
         if user.birthday
-            .birthday 🎂 !{user.birthday}
+            .birthday 🎂 #{user.birthday}
         if user.location
-            .birthday 📍!{user.location}
+            .birthday 📍#{user.location}
         if user.sex
-            .sex 性別: !{user.sex}
-        if user.sex
-            .sex 性別: !{user.sex}
+            .sex 性別: #{user.sex}
         dl
             each field in user.fields
-                dt= field.name
-                dd= field.value
+                dt= mfmToHtml(field.name)
+                dd= mfmToHtml(field.value)
                 
     .count
-        a.notes(href="/" + getAcct(user)) !{user.notesCount} ノート
+        a.notes(href="/" + getAcct(user)) #{user.notesCount} ノート
         |  
         //- a.following(href="/" + getAcct(user) + "/following") 
-        | !{user.followingCount} フォロー
+        | #{user.followingCount} フォロー
         |  
         //- a.followers(href="/" + getAcct(user) + "/followers")
-        | !{user.followersCount} フォロワー
+        | #{user.followersCount} フォロワー
 
 mixin timeline(notes)
     each note in notes

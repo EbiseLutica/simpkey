@@ -7,6 +7,10 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         block meta
         title= title
+        style.
+            body {
+                font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            }
     body
         header
             h1: a(href="/") Simpkey
@@ -21,5 +25,5 @@ html
                 | ・
                 a(href="/terms") 利用規約
             p (C)2020 Xeltica - 
-                a(href="/about") version !{version}
+                a(href="/about") version #{version}
             block footer
