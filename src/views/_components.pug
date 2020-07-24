@@ -7,6 +7,14 @@ mixin note-header(note)
         a(href="/" + getAcct(note.user))
             span.name= getUserName(note.user)
             span.acct(style="color: gray")= getAcct(note.user)
+        if note.user.isAdmin
+            span.bot [ADMIN]
+        else if note.user.isModerator
+            span.bot [MOD]
+        if note.user.isBot
+            span.bot [BOT]
+        if note.user.isCat
+            span.bot [CAT]        
 
 mixin sub-note(note)
     .sub-note
@@ -92,10 +100,28 @@ mixin nav()
         |]
 
 mixin user-header(user, detail = false)
+    if detail
+        if user.host
+            .remote-caution ⚠ リモートのアカウントにつき、情報が正確では無い可能性があります。
+                a(href=user.url || user.uri, target="_blank", rel="noopener noreferrer") リモートで確認する
+        if user.isSuspended
+            .suspended ⚠ このアカウントは凍結されています
+        if user.isSilenced
+            .silenced ⚠ このアカウントはサイレンスされています
     +avatar(user)
     .name: b=getUserName(user)
         | &nbsp;
         span(style="color: gray")= getAcct(user)
+        if user.isLocked
+            span.lock
+        if user.isAdmin
+            span.bot [ADMIN]
+        else if user.isModerator
+            span.bot [MOD]
+        if user.isBot
+            span.bot [BOT]
+        if user.isCat
+            span.bot [CAT]
     if detail
         if user.description
             .description= user.description
