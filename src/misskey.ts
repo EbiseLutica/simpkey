@@ -2,7 +2,9 @@ import axios from 'axios';
 import { User } from './models/User';
 import { Note } from './models/Note';
 
-export async function api<T>(host: string, endpoint: string, opts: { [_: string]: string }): Promise<T> {
+axios.defaults.headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
+
+export async function api<T>(host: string, endpoint: string, opts: Record<string, string>): Promise<T> {
 	const res = await axios.post<T>(`https://${host}/api/${endpoint}`, opts);
 	return res.data;
 }
