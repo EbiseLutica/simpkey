@@ -27,7 +27,7 @@
     "koa-session": "^6.0.0",
     "koa-views": "^6.3.0",
     "mfmf": "^4.1.0",
-    "pug": "^3.0.0",
+    "pug": "^3.0.1",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
